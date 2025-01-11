@@ -1,7 +1,7 @@
 import time
 
 
-class UrTube():
+class UrTube:
     current_user = None
 
     def __init__(self):
@@ -10,10 +10,10 @@ class UrTube():
 
     def log_in(self, nickname, password):
         addit1 = False
-        for i in range(len(self.users)):
-            if nickname in self.users[i]:
-                if hash(self.users[i][1]) == hash(password):
-                    self.current_user = nickname
+        for i in self.users:
+            if nickname == i.nickname:
+                if i.password == hash(password):
+                    self.current_user = i.nickname
                     addit1 = True
                     break
                 else:
@@ -25,64 +25,61 @@ class UrTube():
         else:
             print(self.current_user)
 
+
     def register(self, nickname, password, age):
         addit2 = False
+        new_user = User(nickname, password, age)
+
+
         if len(self.users) == 0:
-           self.users.append([nickname, password, age])
-           self.current_user = nickname
+            self.users.append(new_user)
+            self.current_user = new_user.nickname
         else:
-            for i in range(len(self.users)):
-                if nickname in self.users[i]:
+            for i in self.users:
+                if nickname == i.nickname:
                     print(f'Пользователь {nickname} уже существует')
                     addit2 = False
                     break
                 else:
                     addit2 = True
         if addit2 is True:
-            self.users.append([nickname, password, age])
-            self.current_user = nickname
+            self.users.append(new_user)
+            self.current_user = new_user.nickname
+
 
     def log_out(self):
         self.current_user = None
 
     def add(self, *args):
-        addit3 = []
-        for i in range(len(args)):
-            if args[i].title not in addit3:
-                addit3.append(args[i].title)
-                addit4 = [args[i].title, args[i].duration, args[i].time_now, args[i].adult_mode]
-                self.videos.append(addit4)
-            else:
-                continue
+
+        for i in args:
+           self.videos.append(i)
+
 
     def get_videos(self, search):
         list_search =[]
         search1 = str(search).lower()
-        for i in range(len(self.videos)):
-            title_video = str(self.videos[i][0]).lower()
+        for i in self.videos:
+            title_video = i.title.lower()
             if search1 in title_video:
-                list_search.append(self.videos[i][0])
+                list_search.append(i.title)
             else:
                 continue
         return list_search
 
-
-
-
-
     def watch_video(self, title):
         age1 = 0
-        for i in range(len(self.videos)):
-            if title in self.videos[i]:
+        for i in self.videos:
+            if title == i.title:
                 if self.current_user != None:
-                    for j in range(len(self.users)):
-                        if self.current_user in self.users[j]:
-                            age1 = self.users[j][2]
+                    for j in self.users:
+                        if self.current_user == j.nickname:
+                            age1 = j.age
                             break
                         else:
                             continue
-                    if self.videos[i][3] is False or (self.videos[i][3] is True and age1 >= 18):
-                        for k in range(self.videos[i][1]):
+                    if i.adult_mode is False or (i.adult_mode is True and age1 >= 18):
+                        for k in range(i.duration):
                             time.sleep(1)
                             print(k+1)
 
@@ -114,6 +111,9 @@ class User:
         self.nickname = nickname
         self.password = hash(password)
         self.age = age
+
+    def lk(self):
+        return [self.nickname, self.password, self.age]
 
 ur = UrTube()
 v1 = Video('Лучший язык программирования 2024 года', 200)
